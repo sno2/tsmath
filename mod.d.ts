@@ -348,10 +348,8 @@ export declare namespace Int {
       : [Int.IsPositive<Lhs>, Int.IsNegative<Rhs>] extends [true, true]
       ? Int.Add<Lhs, Int.Negate<Rhs>>
       : [Int.IsNegative<Lhs>, Int.IsNegative<Rhs>] extends [true, true]
-      ? Sub<Int.Negate<Rhs>, Int.Negate<Lhs>>
-      : [Rev<`${Lhs}`>, Rev<`${Rhs}`>] extends [`${infer Lhs}`, `${infer Rhs}`]
-      ? SubParts<Lhs, Rhs>
-      : never;
+      ? Add<Lhs, Int.Negate<Rhs>>
+      : SubParts<Rev<`${Lhs}`>, Rev<`${Rhs}`>>;
 
   type DigitProd<
     Dg1 extends string,
@@ -441,22 +439,25 @@ export declare namespace Int {
       ? MultPos<Int.Abs<Lhs>, Int.Abs<Rhs>>
       : MultPos<Lhs, Rhs>;
 
-  export type BitShift<N extends number> = 2;
-}
+  export type BitShift<N extends number, Movement extends number> = 2;
 
-type Foo = Int.Add<23, 54>;
+  export type Log<N extends number, Base extends number = 10> =
+    //
+    Int.LessThan<N, 1> extends true ? 1 : LogImpl<N, Base>;
 
-/** A checked TS `float` type as a `string`. */
-export type Float<T extends `${number}`> = T & TypeLock<"Float">;
+  type LogImpl<
+    N extends number,
+    Base extends number,
+    $Div extends number = 2,
+    $Count extends 0[] = [0]
+  > =
+    //
+    Int.Sub<N, $Div> extends infer $Rem extends number
+      ? Int.GreaterThan<$Rem, 0> extends true
+        ? LogImpl<N, Base, Int.Mult<$Div, Base>, [...$Count, 0]>
+        : $Count["length"]
+      : never;
 
-export declare namespace Float {
-  export {};
-
-  export type Any = `${number}` & TypeLock<"Float">;
-
-  export type Unsafe<T extends string> = T extends `${number}`
-    ? Float<T>
-    : never;
-
-  export type Unwrap<T extends string> = StripTypeLock<T, "Float">;
+  type A = Int.Add<1, -10>;
+  type B = Int.Sub<1, 10>;
 }

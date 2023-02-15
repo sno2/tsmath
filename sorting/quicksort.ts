@@ -1,6 +1,6 @@
 import type { Int } from "../mod.d.ts";
 
-export interface Provider {
+export interface X {
   input: unknown;
 }
 
@@ -42,7 +42,7 @@ type QuickSortPartLow<
     : $Acc;
 
 export declare namespace QuickSort {
-  export interface Pipe extends Provider {
+  export interface _ extends X {
     output: this["input"] extends number[] ? QuickSort<this["input"]> : never;
   }
 }
